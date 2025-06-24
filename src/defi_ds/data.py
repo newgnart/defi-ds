@@ -1,12 +1,10 @@
-from pathlib import Path
 import os
+import requests
+from typing import Optional
+from datetime import datetime
 from dotenv import load_dotenv
 import dlt
 from dlt.sources.rest_api import rest_api_source
-from typing import Optional, Union
-import requests
-from datetime import datetime, timezone
-from decimal import Decimal
 
 load_dotenv()
 
@@ -20,6 +18,10 @@ ETHERSCAN_TRANSACTION_COLUMNS = {
 
 COINGECKO_API_BASE_URL = "https://api.coingecko.com/api/v3"
 COINGECKO_API_KEY = os.getenv("COINGECKO_API_KEY")
+COINGECKO_PRICES_COLUMNS = {
+    "timestamp": {"data_type": "timestamp", "timezone": False, "precision": 3},
+    "price": {"data_type": "decimal"},
+}
 
 
 @dlt.resource(columns=ETHERSCAN_TRANSACTION_COLUMNS)
@@ -59,17 +61,14 @@ def etherscan_transaction(
 
 
 @dlt.resource(
-    columns={
-        "timestamp": {"data_type": "timestamp", "timezone": False, "precision": 3},
-        "price": {"data_type": "decimal"},
-    },
+    columns=COINGECKO_PRICES_COLUMNS,
 )
 def coingecko_prices(
     coin_id: str,
     vs_currency: str = "usd",
     days: Optional[int] = 90,
 ):
-    """Resource for CoinGecko price data only."""
+    """Resource for CoinGecko price data only, volume, market cap is available but not used"""
 
     url = f"{COINGECKO_API_BASE_URL}/coins/{coin_id}/market_chart"
     headers = {
