@@ -23,14 +23,22 @@ COINGECKO_PRICES_COLUMNS = {
     "price": {"data_type": "decimal"},
 }
 
+COINGECKO_OHLC_COLUMNS = {
+    "timestamp": {"data_type": "timestamp", "timezone": False, "precision": 3},
+    "open": {"data_type": "decimal"},
+    "high": {"data_type": "decimal"},
+    "low": {"data_type": "decimal"},
+    "close": {"data_type": "decimal"},
+}
+
 
 @dlt.resource(columns=ETHERSCAN_TRANSACTION_COLUMNS)
 def etherscan_transaction(
     chainid,
-    module,
-    action,
     address,
-    startblock,
+    module="account",
+    action="txlist",
+    startblock=0,
     endblock="latest",
     page=1,
     offset=1000,
@@ -66,14 +74,13 @@ def etherscan_transaction(
 def coingecko_prices(
     coin_id: str,
     vs_currency: str = "usd",
-    days: Optional[int] = 90,
+    days: Optional[int] = 180,
 ):
     """Resource for CoinGecko price data only, volume, market cap is available but not used"""
 
     url = f"{COINGECKO_API_BASE_URL}/coins/{coin_id}/market_chart"
     headers = {
         "accept": "application/json",
-        "x-cg-pro-api-key": COINGECKO_API_KEY,
     }
     params = {
         "vs_currency": vs_currency,
@@ -91,3 +98,68 @@ def coingecko_prices(
                 "timestamp": datetime.fromtimestamp(int(timestamp_ms) / 1000),
                 "price": float(price),
             }
+
+
+@dlt.resource(
+    columns=COINGECKO_OHLC_COLUMNS,
+)
+def coingecko_ohlc(
+    coin_id: str,
+    vs_currency: str = "usd",
+    days: int = 180,
+):
+
+    url = f"{COINGECKO_API_BASE_URL}/coins/{coin_id}/ohlc"
+    headers = {
+        "accept": "application/json",
+    }
+    params = {
+        "vs_currency": vs_currency,
+        "days": days,
+    }
+
+    response = requests.get(url, headers=headers, params=params)
+    response.raise_for_status()
+    data = response.json()
+    for row in data:
+        yield {
+            "timestamp": datetime.fromtimestamp(int(row[0]) / 1000),
+            "open": float(row[1]),
+            "high": float(row[2]),
+            "low": float(row[3]),
+            "close": float(row[4]),
+        }
+
+
+@dlt.resource()
+def etherscan_log(
+    chainid,
+    address,
+    module="logs",
+    action="getLogs",
+    fromBlock=0,
+    toBlock=22778640,
+    page=1,
+    offset=1000,
+):
+    return rest_api_source(
+        {
+            "client": {"base_url": ETHERSCAN_API_BASE_URL},
+            "resource_defaults": {
+                "endpoint": {
+                    "params": {
+                        "chainid": chainid,
+                        "module": module,
+                        "action": action,
+                        "address": address,
+                        "fromBlock": fromBlock,
+                        "toBlock": toBlock,
+                        "page": page,
+                        "offset": offset,
+                        "apikey": ETHERSCAN_API_KEY,
+                    },
+                }
+            },
+            "resources": ["api"],
+        }
+    )
