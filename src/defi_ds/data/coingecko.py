@@ -1,10 +1,6 @@
-import os
-import requests
 from typing import Optional
 from datetime import datetime
-from dotenv import load_dotenv
 import dlt
-from dlt.sources.helpers.rest_client import RESTClient, paginators
 from dlt.sources.rest_api import RESTAPIConfig, rest_api_resources
 from defi_ds.config import *
 
@@ -42,6 +38,7 @@ def coingecko_prices(
             },
         },
         "resource_defaults": {
+            "primary_key": "timestamp",
             "endpoint": {
                 "params": {
                     "vs_currency": vs_currency,

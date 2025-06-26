@@ -7,7 +7,7 @@ from defi_ds.config import *
 
 
 @dlt.resource(columns=ETHERSCAN_TRANSACTION_COLUMNS)
-def etherscan_transaction(
+def etherscan_transactions(
     chainid,
     address,
     module="account",
@@ -48,7 +48,7 @@ def etherscan_transaction(
 
 
 @dlt.resource(columns=ETHERSCAN_LOG_COLUMNS)
-def etherscan_log(
+def etherscan_logs(
     chainid,
     address,
     module="logs",
