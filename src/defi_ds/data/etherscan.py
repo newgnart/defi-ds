@@ -73,14 +73,16 @@ def etherscan_log(
             "client": {
                 "base_url": ETHERSCAN_API_BASE_URL,
                 "paginator": paginators.PageNumberPaginator(
-                    base_page=1, total_path=None, page_param="page"
+                    base_page=1,
+                    total_path=None,
+                    page_param="page",
                 ),
             },
             "resources": [
                 {
                     "name": "",
                     "endpoint": {"params": params},
-                },
+                }
             ],
         }
     )
