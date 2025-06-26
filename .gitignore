@@ -13,3 +13,6 @@ ENV/
 env/
 .env
 .Python
+
+
+temp/

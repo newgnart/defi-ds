@@ -1,0 +1,10 @@
+{
+  "sfrxeth": {
+    "amm": "0x136e783846ef68c8bd00a3369f787df8d683a696",
+    "controller": "0x8472a9a7632b173c8cf3a86d3afec50c35548e76",
+    "monetary_policy": "0xc684432FD6322c6D58b6bC5d28B18569aA0AD0A1",
+    "collateral_token": "0xac3e018457b222d93114458476f3e3416abbe38f",
+    "price_oracle": "0x19F5B81e5325F882C9853B5585f74f751DE3896d",
+    "leverage_zap": "0xb556FA4C4752321B3154f08DfBDFCF34847f2eac"
+  }
+}

@@ -31,6 +31,11 @@ COINGECKO_OHLC_COLUMNS = {
     "close": {"data_type": "decimal"},
 }
 
+ETHERSCAN_LOG_COLUMNS = {
+    # "address": {"data_type": "varchar"},
+    "topics": {"data_type": "json"},
+}
+
 
 @dlt.resource(columns=ETHERSCAN_TRANSACTION_COLUMNS)
 def etherscan_transaction(
@@ -131,7 +136,7 @@ def coingecko_ohlc(
         }
 
 
-@dlt.resource()
+@dlt.resource(columns=ETHERSCAN_LOG_COLUMNS)
 def etherscan_log(
     chainid,
     address,

@@ -8,7 +8,7 @@ import dlt
 import duckdb
 import time
 
-duckdb_destination = "data/defi_risk_test.duckdb"
+duckdb_destination = "temp/defi_risk.duckdb"
 
 
 def prices(coin_id):
@@ -111,4 +111,5 @@ def transaction(contract_name, address):
 
 
 if __name__ == "__main__":
-    transaction("sfrxeth", "0x8472a9a7632b173c8cf3a86d3afec50c35548e76")
+    # transaction("sfrxeth", "0x8472a9a7632b173c8cf3a86d3afec50c35548e76")
+    log("sfrxeth_controller_log", "0x8472a9a7632b173c8cf3a86d3afec50c35548e76")
