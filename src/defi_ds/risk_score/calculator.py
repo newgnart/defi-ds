@@ -1,5 +1,5 @@
 import math
-from typing import Optional
+from typing import Optional, Tuple
 import pandas as pd
 import numpy as np
 
@@ -77,3 +77,34 @@ def score_with_limits(
                 score = (upper_limit - value) / (upper_limit - lower_limit)
 
     return np.clip(score, 0.0, 1.0)
+
+
+def hhi(borrower_debts: list[float]) -> Tuple[float, float]:
+    """
+    Calculate Herfindahl-Hirschman Index (HHI) score for borrower concentration.
+
+    Args:
+        borrower_debts (list): List of individual borrower debt amounts
+
+    Returns:
+        float: HHI ratio between 0-1 (1.0 = perfect distribution, 0 = concerning concentration)
+    """
+    if not borrower_debts:
+        return 0.0
+
+    # Calculate total debt
+    total_debt = sum(borrower_debts)
+    if total_debt == 0:
+        return 0.0
+
+    # Calculate HHI = Σ(individual borrower debt)²
+    hhi = sum(debt**2 for debt in borrower_debts)
+
+    # Calculate HHI_ideal = (total debt)² / number of borrowers
+    num_borrowers = len(borrower_debts)
+    hhi_ideal = (total_debt**2) / num_borrowers
+
+    # Calculate HHI_ratio = HHI / HHI_ideal
+    # hhi_ratio = hhi / hhi_ideal
+
+    return hhi, hhi_ideal

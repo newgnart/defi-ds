@@ -2,12 +2,8 @@ import math
 from typing import Optional, Dict, Union
 import numpy as np
 import pandas as pd
-from .scores import garman_klass_volatility, score_with_limits
-
-
-def _round_value(value: Union[float, np.number]) -> float:
-    """Helper function to round numeric values consistently."""
-    return value.round(2).item() if hasattr(value, "round") else round(value, 2)
+from .calculator import garman_klass_volatility, score_with_limits
+from .utils import round_value
 
 
 class AssetVolatility:
@@ -51,10 +47,10 @@ class AssetVolatility:
         ratio = volatility1.iloc[-1] / volatility2.iloc[-1]
         score = score_with_limits(ratio, 1.5, 0.75)
         return {
-            f"{window1} day volatility": _round_value(volatility1.iloc[-1]),
-            f"{window2} day volatility": _round_value(volatility2.iloc[-1]),
-            "Volatility ratio": _round_value(ratio),
-            "Volatility score": _round_value(score),
+            f"{window1} day volatility": round_value(volatility1.iloc[-1]),
+            f"{window2} day volatility": round_value(volatility2.iloc[-1]),
+            "Volatility ratio": round_value(ratio),
+            "Volatility score": round_value(score),
         }
 
     def beta_score(self) -> Dict[str, float]:
@@ -126,11 +122,11 @@ class AssetVolatility:
         score = score_with_limits(beta, 2.5, 0.5, reverse=False, target=1.75)
 
         return {
-            "Asset volatility": _round_value(asset_volatility),
-            "Reference volatility": _round_value(reference_volatility),
-            "Correlation": _round_value(correlation),
-            "Beta": _round_value(beta),
-            "Beta score": _round_value(score),
+            "Asset volatility": round_value(asset_volatility),
+            "Reference volatility": round_value(reference_volatility),
+            "Correlation": round_value(correlation),
+            "Beta": round_value(beta),
+            "Beta score": round_value(score),
         }
 
     def var_score(
@@ -158,15 +154,15 @@ class AssetVolatility:
         score = score_with_limits(var_99, -0.01, -0.12, reverse=True, target=-0.085)
 
         return {
-            "99% VaR": _round_value(var_99),
-            "VaR score": _round_value(score),
+            "99% VaR": round_value(var_99),
+            "VaR score": round_value(score),
         }
 
     def final_score(self) -> float:
         """
         Calculate final score.
         """
-        return _round_value(
+        return round_value(
             self.volatility_ratio_score()["Volatility score"] * 0.3
             + self.beta_score()["Beta score"] * 0.3
             + self.var_score()["VaR score"] * 0.4
