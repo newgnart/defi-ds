@@ -5,7 +5,7 @@ from dlt.sources.rest_api import RESTAPIConfig, rest_api_resources
 from defi_ds.config import *
 
 
-def map_prices(data):
+def map_market_chart(data):
     return {
         "timestamp": datetime.fromtimestamp(int(data[0]) / 1000),
         "price": float(data[1]),
@@ -55,7 +55,7 @@ def coingecko_prices(
                 },
                 "processing_steps": [
                     {
-                        "map": map_prices,
+                        "map": map_market_chart,
                     }
                 ],
             },
