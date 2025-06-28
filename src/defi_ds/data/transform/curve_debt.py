@@ -2,7 +2,7 @@ import pandas as pd
 import os
 
 
-def curve_borrower_state(df: pd.DataFrame) -> pd.DataFrame:
+def borrower_state(df: pd.DataFrame) -> pd.DataFrame:
     """
     Manipulate borrower state data to ensure each user has debt data for each day.
 
@@ -76,3 +76,35 @@ def curve_borrower_state(df: pd.DataFrame) -> pd.DataFrame:
     )
 
     return manipulated_df
+
+
+def decode_user_state_data(data: str) -> dict:
+    """
+    Decode Solidity function calldata string with arguments: uint256 collateral, uint256 debt, int256 n1, int256 n2, uint256 liquidation_discount
+
+    Args:
+        calldata_str: string containing hex calldata with '0x' prefix
+
+    Returns:
+        dict with decoded values: collateral, debt, n1, n2, liquidation_discount
+    """
+
+    def hex_to_int256(hex_str):
+        """Convert hex string to int256, handling negative values"""
+        value = int(hex_str, 16)
+        return value if value < 2**255 else value - 2**256
+
+    def hex_to_uint256(hex_str):
+        """Convert hex string to uint256"""
+        return int(hex_str, 16)
+
+    # Extract each 32-byte argument (64 hex characters each)
+    result = {
+        "collateral": hex_to_uint256(data[2:66]),
+        "debt": hex_to_uint256(data[66:130]),
+        "n1": hex_to_int256(data[130:194]),
+        "n2": hex_to_int256(data[194:258]),
+        "liquidation_discount": hex_to_uint256(data[258:]),
+    }
+
+    return result
