@@ -16,4 +16,8 @@ env/
 
 
 temp/
-*.duckdb
+
+# dbt
+dbt_projects/*/dbt_package
+dbt_projects/*/logs
+dbt_projects/*/target
